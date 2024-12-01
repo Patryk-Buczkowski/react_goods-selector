@@ -22,7 +22,11 @@ export class App extends React.Component {
   };
 
   handlerSelect = (good: string) => {
-    this.setState({ selectedGood: good });
+    if (this.state.selectedGood === good) {
+      return this.handlerClear;
+    }
+
+    return this.setState({ selectedGood: good });
   };
 
   handlerClear = () => {
@@ -30,14 +34,6 @@ export class App extends React.Component {
       selectedGood: '',
     });
   };
-
-  helperSelector = (good: string): (() => void) | undefined => {
-    if (this.state.selectedGood === good) {
-      return this.handlerClear;
-    }
-
-    return () => this.handlerSelect(good);
-  }
 
   render() {
     const { selectedGood } = this.state;
@@ -63,6 +59,7 @@ export class App extends React.Component {
           <tbody>
             {goods.map((good: string) => (
               <tr
+                key={good}
                 data-cy="Good"
                 className={cn({
                   'has-background-success-light': selectedGood === good,
@@ -70,19 +67,16 @@ export class App extends React.Component {
               >
                 <td>
                   <button
-                    onClick={this.helperSelector(good)}
-                    data-cy={selectedGood === good
-                      ? 'RemoveButton'
-                      : 'AddButton'}
+                    onClick={() => this.handlerSelect(good)}
+                    data-cy={
+                      selectedGood === good ? 'RemoveButton' : 'AddButton'
+                    }
                     type="button"
-                    className={cn({
-                      button: true,
-                      'button is-info': selectedGood === good,
+                    className={cn('button', {
+                      'is-info': selectedGood === good,
                     })}
                   >
-                    {selectedGood === good
-                      ? '-'
-                      : '+'}
+                    {selectedGood === good ? '-' : '+'}
                   </button>
                 </td>
 
